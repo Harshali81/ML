@@ -1,0 +1,45 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+df = pd.read_csv("C:\\Users\\Harshali\\Downloads\\sales_data_sample.csv",encoding='ISO-8859-1')
+
+print(df.head())
+
+df=df[['SALES','QUANTITYORDERED','PRICEEACH']].dropna()
+
+scaler=StandardScaler()
+scaled_data=scaler.fit_transform(df)
+
+#use the elbow method to find the optimal number of clusters
+inertia=[]
+K= range(1,11)
+
+for k in K:
+    kmeans=KMeans(n_clusters=k,random_state=42)
+    kmeans.fit(scaled_data)
+    inertia.append(kmeans.inertia_)
+
+#plot the elbow graph
+plt.figure(figsize=(8,6))
+plt.plot(K,inertia,'bx-')
+plt.xlabel('Number of clusters (k)')
+plt.ylabel('Inertia')
+plt.title('Elbow Method for Optimal k')
+plt.show()
+
+optimal_k=3
+kmeans=KMeans(n_clusters=optimal_k,random_state=42)
+df['Cluster']=kmeans.fit_predict(scaled_data)
+
+print(df.head())
+
+output_path='clustered_sales_data.csv'
+#df.to_csv(output_path,index=False)
+print(f"Clustered data saved to: {output_path}")
+
+print(f"Clustered data saved to: {output_path}")
+
+output_path
