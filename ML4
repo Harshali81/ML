@@ -1,1 +1,53 @@
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix, accuracy_score, recall_score
+
+# Load the dataset
+df = pd.read_csv("diabetes.csv")
+
+# 1. Data Preprocessing
+# Check for missing values
+if df.isnull().sum().any():
+    df = df.dropna()
+
+# Separate features (X) and target (y)
+X = df.drop(columns='Outcome')  # Assuming 'Outcome' is the target variable
+y = df['Outcome']
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 2. K-Nearest Neighbors Model
+# Initialize the KNN classifier with k=5 (can be tuned)
+knn = KNeighborsClassifier(n_neighbors=5)
+
+# Fit the model on the training data
+knn.fit(X_train, y_train)
+
+# Make predictions
+y_pred = knn.predict(X_test)
+
+# 3. Model Evaluation
+# Confusion Matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+# Accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+# Error Rate (1 - Accuracy)
+error_rate = 1 - accuracy
+
+# Recall
+recall = recall_score(y_test, y_pred)
+
+# Print Evaluation Metrics
+print("Confusion Matrix:")
+print(conf_matrix)
+
+print(f"\nAccuracy: {accuracy:.2f}")
+print(f"Error Rate: {error_rate:.2f}")
+print(f"Recall: {recall:.2f}")
 
