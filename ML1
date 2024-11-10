@@ -19,35 +19,37 @@
  df = df.dropna()
 
  # Convert pickup_datetime to datetime format
- df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'], format='%Y-%m-%d %H:%M:%S UTC'
+ df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'], format='%Y-%m-%d %H:%M:%S UTC')
+
  # Remove negative fare amounts and unrealistic passenger counts (valid range: 1-6)
  df = df[(df['fare_amount'] > 0) & (df['passenger_count'] > 0) & (df['passenger_count'] <= 6)
+
  # NYC Latitude: 40.4774 to 40.9176, Longitude: -74.2591 to -73.7004
  df = df[(df['pickup_latitude'] >= 40.4774) & (df['pickup_latitude'] <= 40.9176) &
         (df['pickup_longitude'] >= -74.2591) & (df['pickup_longitude'] <= -73.7004) &
         (df['dropoff_latitude'] >= 40.4774) & (df['dropoff_latitude'] <= 40.9176) &
         (df['dropoff_longitude'] >= -74.2591) & (df['dropoff_longitude'] <= -73.7004)]
+
  # 2. Identifying outliers
  # Visualize potential outliers using boxplots for numeric columns
  plt.figure(figsize=(14, 6))
- <Figure size 1400x600 with 0 Axes>
- <Figure size 1400x600 with 0 Axes>
+
 
  # Boxplot for fare_amount
  plt.subplot(1, 2, 1)
  sns.boxplot(x=df['fare_amount'])
  plt.title('Fare Amount Boxplot')
- Text(0.5, 1.0, 'Fare Amount Boxplot')
+ 
 
  # Boxplot for passenger_count
  plt.subplot(1, 2, 2)
  sns.boxplot(x=df['passenger_count'])
  plt.title('Passenger Count Boxplot')
- Text(0.5, 1.0, 'Passenger Count Boxplot')
+ 
  
  plt.tight_layout()
  plt.show()
- <Figure size 640x480 with 0 Axes>
+ 
  # 3. Check Correlation
  # Checking correlation between numerical features
  correlation_matrix = df.corr()
@@ -57,49 +59,38 @@
  sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5)
  plt.title('Correlation Matrix')
  plt.show()
- In [15]:
- In [16]:
- In [17]:
- Out[17]:
+
  # 4. Model Implementation (Linear Regression & Random Forest)
  # Prepare features and target
  X = df[['pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude', 'pas
  y = df['fare_amount']
+
  # Train-test split
  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
  # Linear Regression model
  lr_model = LinearRegression()
  lr_model.fit(X_train, y_train)
- ▾ LinearRegression
- LinearRegression()
-In [18]:
+
  # Random Forest model
  rf_model = RandomForestRegressor(n_estimators=50, max_depth=10, random_state=42, n_jobs=-1)  
 rf_model.fit(X_train, y_train)
- Out[18]:
- In [19]:
- In [20]:
- In [21]:
- In [23]:
- In [ ]:
- ▾
- RandomForestRegressor
- RandomForestRegressor(max_depth=10, n_estimators=50, n_jobs=-1, random_state=42)
+
  # 5. Model Evaluation
  # Predictions
  lr_pred = lr_model.predict(X_test)
  rf_pred = rf_model.predict(X_test)
+
  # Evaluation Metrics: RMSE and R2 Score
  lr_rmse = np.sqrt(mean_squared_error(y_test, lr_pred))
  lr_r2 = r2_score(y_test, lr_pred)
  rf_rmse = np.sqrt(mean_squared_error(y_test, rf_pred))
  rf_r2 = r2_score(y_test, rf_pred)
+
  print("Linear Regression:")
  print(f"RMSE: {lr_rmse}")
  print(f"R2 Score: {lr_r2}")
- Linear Regression:
- RMSE: 7.9866116163018805
- R2 Score: 0.28772122381451404
+
  print("\nRandom Forest Regression:")
  print(f"RMSE: {rf_rmse}")
  print(f"R2 Score: {rf_r2}")
